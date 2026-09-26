@@ -46,11 +46,21 @@ what keeps the world from ever becoming malware, and they are the only thing you
   CC-BY-4.0, stored here only as hashes). Ordinary swearing is fine.
 - Anything the checks miss, the Keepers can still redact (law V).
 
-## How a PR becomes law
-Two automated checks run on every pull request:
-1. **The Law**: nothing removed or changed, only `entities/` and `assets/` touched, sizes and names
-   in bounds.
-2. **The brick test**: the world is booted with your entity in it, and it must keep living.
+## VII. The Living World
+- **Worlds.** `THE_GAME.goTo('cave')` moves between worlds. A creature can live in one
+  (`world: 'sky'`), several (`worlds: ['sky', 'space']`) or, untagged, everywhere. Outside its world
+  it sleeps with its state intact; `enter(G)` and `leave(G)` run on the way in and out.
+- **Metabolism.** Every creature shares one frame. One that costs too much is called less often,
+  never removed; it recovers as soon as it gets cheaper. The costly ones starve.
+- **Failure is local.** A creature that throws is set aside for that frame; the world goes on.
 
-If both pass, the bot merges it and the world redeploys within a minute. There is no human review.
-Choose your mutations wisely.
+## How a PR becomes law
+Three automated checks run on every pull request:
+1. **The Law**: nothing removed or changed, nothing outside the world touched, sizes, names and
+   file types in bounds.
+2. **Content**: no links, no slurs, no sexual content.
+3. **The brick test**: the world is booted with your change in it and must keep living. It fails if
+   the world freezes, leaves the page, crawls below 10 frames a second, or eats over 512 MB.
+
+If all three pass, the bot merges it and the world redeploys within a minute. There is no human
+review. Choose your mutations wisely.
