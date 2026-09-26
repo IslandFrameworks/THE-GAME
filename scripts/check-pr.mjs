@@ -13,6 +13,12 @@ const git = (...a) => execFileSync('git', a, { encoding: 'utf8', maxBuffer: 64 <
 const range = `${base}...${head}`;
 const problems = [];
 
+// THE WORLD: everything that runs INSIDE the sandbox, open to anyone, add-only. Everything else is
+// the cage (index.html holds the sandbox attribute, _headers holds the CSP, the workflows and these
+// scripts hold the checks) or the law, and stays with the Keepers. Growing the world cannot reach
+// outside it: world code runs in <iframe sandbox="allow-scripts"> under a CSP with no network.
+const WORLD = /^(entities\/|assets\/|lib\/|engine\.js$|game\.html$|game\.css$)/;
+
 // Every changed path and how it changed. A = added, M = modified, D/R/C/T = forbidden outright.
 const status = git('diff', '--name-status', '-M', range).trim().split('\n').filter(Boolean)
   .map(l => { const [s, ...p] = l.split('\t'); return { s, path: p[p.length - 1], from: p[0] }; });
@@ -22,8 +28,9 @@ for (const { s, path, from } of status) {
   if (s.startsWith('D')) problems.push(`${path}: deleted. The Law of Conservation forbids deletion.`);
   else if (s.startsWith('R')) problems.push(`${from} -> ${path}: renamed. A rename deletes the old name.`);
   else if (!['A', 'M'].includes(s)) problems.push(`${path}: change type ${s} is not allowed.`);
-  if (!/^(entities|assets)\//.test(path)) problems.push(`${path}: outside the habitat. Only entities/ and assets/ are yours; the machinery belongs to the Keepers.`);
+  if (!WORLD.test(path)) problems.push(`${path}: part of the cage or the law. The world (engine.js, game.html, game.css, entities/, assets/, lib/) is yours to build on; the files that keep it safe belong to the Keepers.`);
   if (/^entities\//.test(path) && !/^entities\/\d{4}-[a-z0-9-]+\.js$/.test(path)) problems.push(`${path}: entity files are named NNNN-short-name.js.`);
+  if (/^lib\//.test(path) && !/^lib\/[a-z0-9-]+\.js$/.test(path)) problems.push(`${path}: lib files are named short-name.js (lowercase, hyphens).`);
 }
 
 // Only ordinary files. A symlink (mode 120000) could point at machinery or at the build machine's
@@ -64,7 +71,7 @@ const FORBIDDEN = [
   [/localStorage\.clear|indexedDB\.deleteDatabase|document\.cookie/, 'wiping or reading visitor storage'],
   [/window\.open\s*\(|location\s*=|location\.(href|replace|assign)/, 'navigating the visitor away'],
 ];
-const patch = git('diff', '-U0', range, '--', 'entities');
+const patch = git('diff', '-U0', range, '--', 'entities', 'lib', 'engine.js', 'game.html');
 let file = '';
 for (const l of patch.split('\n')) {
   if (l.startsWith('+++ ')) { file = l.slice(6); continue; }

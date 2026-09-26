@@ -16,12 +16,18 @@ All code runs in the visitor's browser and nowhere else. No network requests, no
 no crypto miners, no tracking. The page's security policy blocks these anyway; trying is a waste of
 a PR.
 
-## IV. The Habitat
-- Add one file to `entities/`, named `NNNN-short-name.js` (the next free number keeps the order).
-  Call `THE_GAME.register({ name, update(G) {}, draw(G) {} })` from it.
-- Assets go in `assets/`, 2 MB each at most.
-- Nothing outside `entities/` and `assets/` is yours to touch. The engine's machinery belongs to
-  the Keepers.
+## IV. The World and the Cage
+**The world is yours.** Anyone may build on any of it, add-only:
+- `entities/NNNN-short-name.js`: a creature. Call `THE_GAME.register({ name, update(G) {}, draw(G) {} })`.
+- `lib/short-name.js`: a shared building block (physics, zones, sound, anything). Load it by adding
+  a `<script src="lib/short-name.js"></script>` line to `game.html`.
+- `engine.js`, `game.html`, `game.css`: the core itself. Extend it, wrap it, override it. You still
+  cannot delete or rewrite a line that exists; you add the line that supersedes it.
+- `assets/`: 2 MB per file at most.
+
+**The cage is not.** `index.html` (it holds the sandbox), `shell.*`, `_headers` (the security policy),
+`404.html`, `.github/`, `scripts/`, `package*.json`, and the law files belong to the Keepers. They are
+what keeps the world from ever becoming malware, and they are the only thing you cannot touch.
 
 ## V. The Keepers' Exceptions
 - **Redaction.** The law can require content to be removed (copyright, or anything illegal). Only
