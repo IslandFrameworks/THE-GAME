@@ -1,16 +1,32 @@
 // THE GUARD. The first script game.html runs, before the engine or any contributed code.
 //
-// 1. The world only ever runs inside index.html's sandboxed frame. Opened any other way (someone
-//    links straight to /game), it stops loading everything after this line and goes to the front
-//    page instead, so contributed code never runs outside the cage.
-if (window.top === window.self) {
+// 1. The world only ever runs inside the front page's frame. Opened any other way (someone links
+//    straight to the world's address, or another site frames it), it stops loading everything after
+//    this line and goes to the front page instead, so contributed code never runs outside the cage.
+const SHELL = '__SHELL_ORIGIN__';
+const framedByShell = window.top !== window.self &&
+  (!location.ancestorOrigins || location.ancestorOrigins[location.ancestorOrigins.length - 1] === SHELL);
+if (!framedByShell) {
   window.stop();
-  // replaceChildren, not innerHTML: Trusted Types (in _headers) refuses innerHTML here, and a guard
-  // that throws before redirecting leaves the visitor on a blank page.
+  // replaceChildren, not innerHTML: Trusted Types refuses innerHTML here, and a guard that throws
+  // before redirecting leaves the visitor on a blank page.
   document.documentElement.replaceChildren();
-  location.replace('/');
-  throw new Error('THE GAME only runs inside its frame.');
+  if (window.top === window.self) location.replace(SHELL);
+  throw new Error('THE GAME only runs inside its front page.');
 }
+
+// 1b. THE HEARTBEAT. Every half second, tell the front page this world is alive and how far it has
+//     got. The world lives on its own site, so (in desktop browsers) it runs in its own process:
+//     if it freezes, the front page keeps running, hears the silence and restarts it. References
+//     are taken here, before any contributed code exists, so nothing contributed can re-route them.
+(function () {
+  const every = window.setInterval.bind(window);
+  const parentWindow = window.parent;
+  const send = parentWindow.postMessage.bind(parentWindow);
+  every(() => {
+    try { send({ type: 'THE_GAME_HEARTBEAT', frame: window.THE_GAME ? window.THE_GAME.frame : -1 }, SHELL); } catch (e) { /* nothing to do */ }
+  }, 500);
+})();
 
 // 2. Close the network paths the security policy does NOT cover. Measured 2026-09-26 inside this
 //    very sandbox: a <link rel=preconnect> opened a TCP connection, <link rel=dns-prefetch> made a

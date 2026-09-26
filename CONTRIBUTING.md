@@ -31,7 +31,8 @@ a PR. Some doors are simply not in the world at all:
 - `assets/`: media only (png, jpg, gif, webp, avif, mp3, ogg, wav, m4a, json, txt), 2 MB per file.
 
 **The cage is not.** `index.html` (it holds the sandbox), `game.html` and `guard.js` (they keep the
-world from ever running outside it), `shell.*`, `_headers` (the security policy),
+world from ever running outside it), `shell.*` (the front page and its heartbeat watcher),
+`headers/` (the security policies),
 `404.html`, `.github/`, `scripts/`, `package*.json`, and the law files belong to the Keepers. They are
 what keeps the world from ever becoming malware, and they are the only thing you cannot touch.
 
@@ -58,6 +59,9 @@ what keeps the world from ever becoming malware, and they are the only thing you
 - **Metabolism.** Every creature shares one frame. One that costs too much is called less often,
   never removed; it recovers as soon as it gets cheaper. The costly ones starve.
 - **Failure is local.** A creature that throws is set aside for that frame; the world goes on.
+- **The heartbeat.** The world lives on its own site and beats twice a second to the front page. If
+  it freezes (a time bomb, a loop on some rare input), the front page notices and restarts it; if it
+  keeps freezing, it stops and asks to be reported. Silencing the heartbeat fails the brick test.
 
 ## How a PR becomes law
 Three automated checks run on every pull request:
