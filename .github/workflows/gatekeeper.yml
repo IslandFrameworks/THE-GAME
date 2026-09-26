@@ -40,10 +40,16 @@ jobs:
         env:
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: node scripts/check-pr.mjs "$(git rev-parse HEAD)" "$HEAD_SHA"
-      - name: Place the PR's habitat files into main's tree
+      - name: Place EVERY file the PR changed into main's tree
+        # Derived from the PR itself, not a hand-kept list. The Law above already proved every
+        # changed path is in the world, so this is exactly the world as it would be after merge.
+        # (It used to copy only entities/ and assets/, so a change to engine.js or lib/ was
+        # brick-tested against main's OLD engine: found by the red team, 2026-09-26.)
         env:
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-        run: git checkout "$HEAD_SHA" -- entities assets
+        run: |
+          git diff --name-only -z --diff-filter=AM "$(git rev-parse HEAD)...$HEAD_SHA" \
+            | xargs -0 -r git checkout "$HEAD_SHA" --
       - name: Install the brick test's one dependency (pinned, from main's lockfile)
         run: npm ci --ignore-scripts --no-audit --no-fund
       - name: The brick test (the world must keep living)
