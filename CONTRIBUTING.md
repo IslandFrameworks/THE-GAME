@@ -38,6 +38,14 @@ what keeps the world from ever becoming malware, and they are the only thing you
   The Keepers may list it in `QUARANTINE.md`: the file stays, untouched and dormant, but is not
   loaded. Bricking the world is the one move the game does not allow.
 
+## VI. Content
+- **No links.** No URLs, web addresses or invite links anywhere in the world. Nothing in it can
+  send anyone anywhere, so a link is only ever spam.
+- **No slurs and no sexual content.** Checked automatically against a word list (the list of
+  [LDNOOBW](https://github.com/LDNOOBW/List-of-Dirty-Naughty-Obscene-and-Otherwise-Bad-Words),
+  CC-BY-4.0, stored here only as hashes). Ordinary swearing is fine.
+- Anything the checks miss, the Keepers can still redact (law V).
+
 ## How a PR becomes law
 Two automated checks run on every pull request:
 1. **The Law**: nothing removed or changed, only `entities/` and `assets/` touched, sizes and names

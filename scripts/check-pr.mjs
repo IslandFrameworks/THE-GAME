@@ -6,6 +6,8 @@
 // that fails fast with a clear message; the real sandbox is the CSP in _headers, which the browser
 // enforces however cleverly a call is disguised.
 import { execFileSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
+import { words, windows, hashOf, LINK_PATTERNS, stringsAndComments } from './content-rules.mjs';
 
 const [base, head] = process.argv.slice(2);
 if (!base || !head) { console.error('usage: check-pr.mjs <base> <head>'); process.exit(2); }
@@ -80,6 +82,31 @@ for (const l of patch.split('\n')) {
   if (l.startsWith('+++ ')) { file = l.slice(6); continue; }
   if (!l.startsWith('+') || l.startsWith('+++')) continue;
   for (const [re, why] of FORBIDDEN) if (re.test(l)) problems.push(`${file}: ${why}: ${l.slice(1).trim().slice(0, 80)}`);
+}
+
+// CONTENT GATES over every ADDED line of text in the world: links and spam (inside strings and
+// comments, where a link has to live; whole lines for .txt/.json), and the hashed word list
+// (scripts/blocklist.json; ordinary swears are allowed, see content-rules.mjs). Text assembled at
+// runtime can dodge a static check; nothing in the world can send anyone anywhere regardless.
+const block = new Set(JSON.parse(readFileSync(new URL('./blocklist.json', import.meta.url), 'utf8')).hashes);
+const textPatch = git('diff', '-U0', range, '--', 'entities', 'lib', 'engine.js', 'game.css', 'assets/*.txt', 'assets/*.json');
+let tfile = '';
+const flagged = new Set();
+for (const l of textPatch.split('\n')) {
+  if (l.startsWith('+++ ')) { tfile = l.slice(6); continue; }
+  if (!l.startsWith('+') || l.startsWith('+++')) continue;
+  const line = l.slice(1);
+  const linkScope = /\.(txt|json)$/.test(tfile) ? [line] : stringsAndComments(line);
+  if (linkScope.some(sc => LINK_PATTERNS.some(re => re.test(sc))) && !flagged.has(tfile + ':link')) {
+    flagged.add(tfile + ':link');
+    problems.push(`${tfile}: contains a link or web address. THE GAME is links-free: nothing in it can send anyone anywhere.`);
+  }
+  for (const w of windows(words(line))) {
+    if (block.has(hashOf(w)) && !flagged.has(tfile + ':word')) {
+      flagged.add(tfile + ':word');
+      problems.push(`${tfile}: contains a word on the blocked list (slurs and sexual content; ordinary swearing is fine).`);
+    }
+  }
 }
 
 if (problems.length) {
