@@ -6,6 +6,7 @@
 /package-lock.json @IslandFrameworks
 /engine.js       @IslandFrameworks
 /index.html      @IslandFrameworks
+/404.html        @IslandFrameworks
 /game.html       @IslandFrameworks
 /shell.js        @IslandFrameworks
 /shell.css       @IslandFrameworks
