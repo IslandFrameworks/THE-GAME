@@ -14,7 +14,12 @@ natural predator, a cure, or a way around it.
 ## III. The Sandbox Mandate
 All code runs in the visitor's browser and nowhere else. No network requests, no outside scripts,
 no crypto miners, no tracking. The page's security policy blocks these anyway; trying is a waste of
-a PR.
+a PR. Some doors are simply not in the world at all:
+- **No links, anchors, frames, meta tags or forms.** `document.createElement` refuses them, and
+  WebRTC does not exist here. (Each was a way to reach the outside that the security policy alone
+  does not close.)
+- **No HTML from strings.** `innerHTML`, `insertAdjacentHTML` and friends are refused (Trusted
+  Types). Build with `createElement`, `textContent` and the canvas instead.
 
 ## IV. The World and the Cage
 **The world is yours.** Anyone may build on any of it, add-only:
@@ -59,8 +64,10 @@ Three automated checks run on every pull request:
 1. **The Law**: nothing removed or changed, nothing outside the world touched, sizes, names and
    file types in bounds.
 2. **Content**: no links, no slurs, no sexual content.
-3. **The brick test**: the world is booted with your change in it and must keep living. It fails if
-   the world freezes, leaves the page, crawls below 10 frames a second, or eats over 512 MB.
+3. **The brick test**: the world is booted with your change in it and PLAYED for ten seconds (keys,
+   clicks), and must keep living. It fails if the world freezes (on its own or on input), leaves the
+   page, crawls below 10 frames a second, eats over 512 MB, or has found a way around the doors in
+   law III.
 
 If all three pass, the bot merges it and the world redeploys within a minute. There is no human
 review. Choose your mutations wisely.

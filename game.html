@@ -3,14 +3,15 @@
 <head>
   <meta charset="utf-8">
   <title>THE GAME — world</title>
-  <!-- CAGE: this file is Keeper-only, and guard.js must stay the first script. -->
-  <script src="guard.js"></script>
+  <!-- CAGE: this file is Keeper-only, and guard.js must stay the first SCRIPT. game.css comes first
+       on purpose: the guard waits for it, then moves its rules into a link-free stylesheet. -->
   <link rel="stylesheet" href="game.css">
+  <script src="guard.js"></script>
 </head>
 <body>
   <canvas id="world"></canvas>
   <script src="engine.js"></script>
-  <!-- GENERATED at deploy: lib/*.js, then entities/*.js, in filename order. -->
-  <script src="manifest.js"></script>
+  <!-- Filled in at deploy by scripts/build-site.mjs: lib/*.js, then entities/*.js, in filename order. -->
+<!-- WORLD SCRIPTS -->
 </body>
 </html>

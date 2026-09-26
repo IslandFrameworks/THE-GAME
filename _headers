@@ -19,8 +19,10 @@
 # CSP they receive, so this adds to the policy above rather than replacing it.
 /game
   Content-Security-Policy: sandbox allow-scripts
+  Content-Security-Policy: require-trusted-types-for 'script'; trusted-types 'none'
 /game.html
   Content-Security-Policy: sandbox allow-scripts
+  Content-Security-Policy: require-trusted-types-for 'script'; trusted-types 'none'
 /entities/*
   Content-Security-Policy: sandbox allow-scripts
 /lib/*
