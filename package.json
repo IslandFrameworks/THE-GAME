@@ -1,5 +1,6 @@
 {
   "name": "the-game",
+  "license": "MIT",
   "private": true,
   "description": "A browser game that only grows. See CONTRIBUTING.md.",
   "type": "module",
