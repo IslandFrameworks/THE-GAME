@@ -1,11 +1,13 @@
 # The cage and the law. Changes here never auto-merge; a Keeper must review them.
-# The world (engine.js, game.html, game.css, entities/, assets/, lib/) is open to everyone, add-only.
+# The world (engine.js, game.css, entities/, assets/, lib/) is open to everyone, add-only.
 /.github/        @IslandFrameworks
 /_headers        @IslandFrameworks
 /scripts/        @IslandFrameworks
 /package.json    @IslandFrameworks
 /package-lock.json @IslandFrameworks
 /index.html      @IslandFrameworks
+/game.html       @IslandFrameworks
+/guard.js        @IslandFrameworks
 /404.html        @IslandFrameworks
 /shell.js        @IslandFrameworks
 /shell.css       @IslandFrameworks

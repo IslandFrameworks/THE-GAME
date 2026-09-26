@@ -19,13 +19,14 @@ a PR.
 ## IV. The World and the Cage
 **The world is yours.** Anyone may build on any of it, add-only:
 - `entities/NNNN-short-name.js`: a creature. Call `THE_GAME.register({ name, update(G) {}, draw(G) {} })`.
-- `lib/short-name.js`: a shared building block (physics, zones, sound, anything). Load it by adding
-  a `<script src="lib/short-name.js"></script>` line to `game.html`.
-- `engine.js`, `game.html`, `game.css`: the core itself. Extend it, wrap it, override it. You still
-  cannot delete or rewrite a line that exists; you add the line that supersedes it.
-- `assets/`: 2 MB per file at most.
+- `lib/short-name.js`: a shared building block (physics, zones, sound, anything). Every lib file
+  loads automatically, before the creatures, in filename order.
+- `engine.js`, `game.css`: the core itself. Extend it, wrap it, override it. You still cannot delete
+  or rewrite a line that exists; you add the line that supersedes it.
+- `assets/`: media only (png, jpg, gif, webp, avif, mp3, ogg, wav, m4a, json, txt), 2 MB per file.
 
-**The cage is not.** `index.html` (it holds the sandbox), `shell.*`, `_headers` (the security policy),
+**The cage is not.** `index.html` (it holds the sandbox), `game.html` and `guard.js` (they keep the
+world from ever running outside it), `shell.*`, `_headers` (the security policy),
 `404.html`, `.github/`, `scripts/`, `package*.json`, and the law files belong to the Keepers. They are
 what keeps the world from ever becoming malware, and they are the only thing you cannot touch.
 

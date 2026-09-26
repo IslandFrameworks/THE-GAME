@@ -12,3 +12,19 @@
   Referrer-Policy: no-referrer
   Cross-Origin-Opener-Policy: same-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), serial=(), bluetooth=(), hid=(), clipboard-read=(), clipboard-write=(), display-capture=(), fullscreen=()
+
+# THE SECOND LAYER. Every path contributed code can live at is sandboxed BY THE SERVER, not only by
+# index.html's iframe attribute: even opened directly, a document from these paths has an opaque
+# origin, no popups, no forms, no top-level navigation of other windows. Browsers enforce every
+# CSP they receive, so this adds to the policy above rather than replacing it.
+/game
+  Content-Security-Policy: sandbox allow-scripts
+/game.html
+  Content-Security-Policy: sandbox allow-scripts
+/entities/*
+  Content-Security-Policy: sandbox allow-scripts
+/lib/*
+  Content-Security-Policy: sandbox allow-scripts
+/assets/*
+  Content-Security-Policy: sandbox allow-scripts
+
