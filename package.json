@@ -1,0 +1,12 @@
+{
+  "name": "the-game",
+  "private": true,
+  "description": "A browser game that only grows. See CONTRIBUTING.md.",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build-manifest.mjs"
+  },
+  "devDependencies": {
+    "puppeteer-core": "24.43.1"
+  }
+}

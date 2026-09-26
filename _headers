@@ -1,0 +1,14 @@
+# THE SANDBOX, enforced by the browser rather than by a linter. Two layers:
+#  1. game.html runs inside <iframe sandbox="allow-scripts"> (index.html): no cookies, no storage,
+#     no top-level navigation, no popups, no forms, no downloads.
+#  2. This CSP on every page: no network, no outside scripts, no eval, and frames may only load
+#     from this site, so the caged frame cannot navigate itself off it either.
+# A contributor cannot edit this file (machinery; the gatekeeper rejects it), and a second CSP
+# added anywhere could only tighten this one: browsers enforce every policy they receive.
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; media-src 'self' data: blob:; font-src 'self'; connect-src 'none'; worker-src 'none'; frame-src 'self'; child-src 'self'; frame-ancestors 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; manifest-src 'none'
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: no-referrer
+  Cross-Origin-Opener-Policy: same-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), serial=(), bluetooth=(), hid=(), clipboard-read=(), clipboard-write=(), display-capture=(), fullscreen=()

@@ -1,0 +1,15 @@
+# The machinery. Changes here never auto-merge; a Keeper must review them.
+/.github/        @IslandFrameworks
+/_headers        @IslandFrameworks
+/scripts/        @IslandFrameworks
+/package.json    @IslandFrameworks
+/package-lock.json @IslandFrameworks
+/engine.js       @IslandFrameworks
+/index.html      @IslandFrameworks
+/game.html       @IslandFrameworks
+/shell.js        @IslandFrameworks
+/shell.css       @IslandFrameworks
+/game.css        @IslandFrameworks
+/REDACTIONS.md   @IslandFrameworks
+/QUARANTINE.md   @IslandFrameworks
+/CONTRIBUTING.md @IslandFrameworks

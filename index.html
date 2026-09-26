@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>THE GAME</title>
+  <link rel="stylesheet" href="shell.css">
+</head>
+<body>
+  <!-- THE CAGE. Contributed code never runs in this page. It runs in game.html inside a sandbox
+       with ONLY allow-scripts: no same-origin (so no cookies or storage), no top navigation, no
+       popups, no forms, no downloads. This page's CSP (frame-src 'self') also stops the frame from
+       navigating itself anywhere off this site. -->
+  <div id="gate">
+    <h1>THE GAME</h1>
+    <p>A world built by strangers, one addition at a time. Nothing is ever deleted.</p>
+    <p class="warn">It may contain flashing lights and sudden sounds.</p>
+    <button id="enter">Enter</button>
+  </div>
+  <iframe id="world" title="THE GAME" sandbox="allow-scripts" hidden></iframe>
+  <script src="shell.js"></script>
+</body>
+</html>

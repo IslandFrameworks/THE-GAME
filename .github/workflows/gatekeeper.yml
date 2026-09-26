@@ -1,0 +1,63 @@
+# THE ONLY AUTOMATION. Two jobs, and why they are shaped this way.
+#
+# pull_request_target runs THIS file from main (the trusted copy), never a PR's edited version.
+# (With plain pull_request a PR runs its own workflow files: an attacker could rewrite the check
+# to always pass.)
+#
+# judge   has ZERO permissions: an empty token and no secrets. It is the only place a contributor's
+#         code ever executes (inside headless Chrome, for the brick test), so there is nothing in it
+#         to steal. Its tooling comes from main: the checkout is main, the PR is fetched as data and
+#         only its entities/ and assets/ files are placed into the tree.
+# merge   holds write access and never checks out or runs anything. It merges exactly the commit
+#         that was judged, only if judge passed; a push after judging makes the merge fail.
+#
+# No Cloudflare credential exists in this repository: Cloudflare Pages pulls and builds it itself.
+name: gatekeeper
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+permissions: {}
+concurrency:
+  group: gatekeeper-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+jobs:
+  judge:
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: Check out main (trusted tooling only)
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Fetch the PR as data
+        env:
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.clone_url }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: git fetch --no-tags "$HEAD_REPO" "$HEAD_SHA"
+      - name: The Law (static)
+        env:
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: node scripts/check-pr.mjs "$(git rev-parse HEAD)" "$HEAD_SHA"
+      - name: Place the PR's habitat files into main's tree
+        env:
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: git checkout "$HEAD_SHA" -- entities assets
+      - name: Install the brick test's one dependency (pinned, from main's lockfile)
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: The brick test (the world must keep living)
+        run: node scripts/brick-test.mjs
+  merge:
+    needs: judge
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Merge exactly what was judged
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: gh pr merge "$PR" --repo "$GITHUB_REPOSITORY" --squash --match-head-commit "$HEAD_SHA"
