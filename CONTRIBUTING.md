@@ -1,6 +1,6 @@
 # The Covenant
 
-THE GAME is a world that only grows. By opening a pull request, you accept these laws.
+THE GAME is a world that only grows. By opening a pull request, you accept these laws and the [Disclaimer](DISCLAIMER.md).
 
 ## I. Conservation
 Nothing that exists may be deleted or changed, save by the Keepers under Law VII. Only additions
