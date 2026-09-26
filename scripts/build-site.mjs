@@ -5,6 +5,6 @@ import { cpSync, mkdirSync, rmSync, existsSync } from 'node:fs';
 execFileSync('node', ['scripts/build-manifest.mjs'], { stdio: 'inherit' });
 rmSync('dist', { recursive: true, force: true });
 mkdirSync('dist');
-for (const f of ['index.html', '404.html', 'shell.js', 'shell.css', 'game.html', 'game.css', 'engine.js', 'manifest.js', '_headers']) cpSync(f, `dist/${f}`);
+for (const f of ['index.html', '404.html', 'guard.js', 'shell.js', 'shell.css', 'game.html', 'game.css', 'engine.js', 'manifest.js', '_headers']) cpSync(f, `dist/${f}`);
 for (const d of ['entities', 'assets', 'lib']) if (existsSync(d)) cpSync(d, `dist/${d}`, { recursive: true, filter: s => !/\/\.[^/]*$/.test(s) });
 console.log('dist/ built');

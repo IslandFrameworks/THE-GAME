@@ -8,12 +8,15 @@
 import { readdirSync, readFileSync, writeFileSync, existsSync } from 'node:fs';
 const quarantined = new Set(existsSync('QUARANTINE.md')
   ? [...readFileSync('QUARANTINE.md', 'utf8').matchAll(/^- `?(\d{4}-[a-z0-9-]+\.js)`?/gm)].map(m => m[1]) : []);
-const files = readdirSync('entities').filter(f => /^[\w.-]+\.js$/.test(f) && !quarantined.has(f)).sort();
+// lib/ (shared building blocks) loads before entities/, so creatures can use what lib provides.
+const libs = existsSync('lib') ? readdirSync('lib').filter(f => /^[a-z0-9-]+\.js$/.test(f)).sort().map(f => 'lib/' + f) : [];
+const ents = readdirSync('entities').filter(f => /^[\w.-]+\.js$/.test(f) && !quarantined.has(f)).sort().map(f => 'entities/' + f);
+const files = [...libs, ...ents];
 writeFileSync('manifest.js',
   `// GENERATED at deploy from entities/. Do not commit.\n` +
   `for (const f of ${JSON.stringify(files)}) {\n` +
   `  const s = document.createElement('script');\n` +
-  `  s.src = 'entities/' + f; s.async = false;\n` +
+  `  s.src = f; s.async = false;\n` +
   `  document.body.appendChild(s);\n` +
   `}\n`);
-console.log(`manifest: ${files.length} entities${quarantined.size ? `, ${quarantined.size} quarantined` : ''}`);
+console.log(`manifest: ${libs.length} lib, ${ents.length} entities${quarantined.size ? `, ${quarantined.size} quarantined` : ''}`);
