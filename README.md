@@ -1,6 +1,6 @@
 # THE GAME
 
-**Play it: https://the-game-553.pages.dev**
+**Play it: https://thegame-live.pages.dev**
 
 A browser game that only grows. Anyone can add to it; nobody can take anything away. Every merged
 pull request goes live within a minute, and no human reviews it.
