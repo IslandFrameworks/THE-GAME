@@ -17,4 +17,5 @@
 5. **Keepers' discretion.** The Keepers may redact or quarantine a contribution under the Covenant
    (Law VII). Doing so, or not doing so, does not make them responsible for it.
 
-By opening a pull request, you accept these terms.
+By opening a pull request, you accept these terms and license your contribution under the
+[MIT License](LICENSE).
