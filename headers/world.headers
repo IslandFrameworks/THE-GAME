@@ -1,0 +1,12 @@
+# THE WORLD (thegame-world). Everything contributed runs here and only here. Every document on this
+# site is sandboxed BY THE SERVER (opaque origin: no cookies, no storage, no popups, no forms), may
+# only be framed by the front page (__SHELL_ORIGIN__), cannot reach the network, and cannot build
+# HTML from strings (Trusted Types). guard.js closes what the CSP does not (resource hints, WebRTC).
+# Browsers enforce every CSP they receive, so each line below only ever tightens the others.
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; media-src 'self' data: blob:; font-src 'self'; connect-src 'none'; worker-src 'none'; frame-src 'none'; child-src 'none'; frame-ancestors __SHELL_ORIGIN__; object-src 'none'; base-uri 'none'; form-action 'none'; manifest-src 'none'
+  Content-Security-Policy: sandbox allow-scripts
+  Content-Security-Policy: require-trusted-types-for 'script'; trusted-types 'none'
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: no-referrer
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), serial=(), bluetooth=(), hid=(), clipboard-read=(), clipboard-write=(), display-capture=(), fullscreen=()

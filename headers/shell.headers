@@ -1,0 +1,10 @@
+# THE FRONT PAGE (thegame-live). It never runs contributed code. It frames the world, which lives
+# on its OWN site (__WORLD_ORIGIN__) so that, in desktop browsers, the world runs in a separate
+# process: a frozen world cannot freeze this page, and this page's heartbeat watcher can restart it.
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'none'; worker-src 'none'; frame-src __WORLD_ORIGIN__; child-src __WORLD_ORIGIN__; frame-ancestors 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; manifest-src 'none'
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: no-referrer
+  Cross-Origin-Opener-Policy: same-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), serial=(), bluetooth=(), hid=(), clipboard-read=(), clipboard-write=(), display-capture=()
