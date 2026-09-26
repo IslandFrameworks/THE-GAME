@@ -53,3 +53,26 @@
   }
   requestAnimationFrame(loop);
 })();
+
+// ---------------------------------------------------------------------------------------------
+// WORLDS. Added, not rewritten: the loop above is untouched. A creature can live in one world
+// (`world: 'sky'`) or several (`worlds: ['sky', 'space']`); an untagged creature lives everywhere.
+// Only creatures in the current world run, so a shooting star in the sky stops when you go to the
+// cave and picks up exactly where it was when you come back. `enter(G)` / `leave(G)` are called
+// on the way in and out, for anything that should reset or save. The loop reads THE_GAME.entities
+// through .slice(), so that is where the current world is chosen.
+(function () {
+  const G = window.THE_GAME;
+  G.world = 'home';
+  const livesIn = (e, w) => (e.worlds ? e.worlds.includes(w) : e.world ? e.world === w : true);
+  G.inWorld = (e) => livesIn(e, G.world);
+  const everyone = () => Array.prototype.slice.call(G.entities);
+  G.entities.slice = function () { return everyone().filter(G.inWorld); };
+  G.goTo = (next) => {
+    if (next === G.world) return;
+    const before = G.world;
+    for (const e of everyone()) if (livesIn(e, before) && !livesIn(e, next) && typeof e.leave === 'function') { try { e.leave(G); } catch (err) { console.warn('[THE_GAME] leave failed:', err); } }
+    G.world = next;
+    for (const e of everyone()) if (livesIn(e, next) && !livesIn(e, before) && typeof e.enter === 'function') { try { e.enter(G); } catch (err) { console.warn('[THE_GAME] enter failed:', err); } }
+  };
+})();
