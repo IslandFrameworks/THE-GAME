@@ -50,4 +50,5 @@ Every pull request is judged automatically:
 2. **Content:** no links, slurs or sexual content.
 3. **The Brick Test:** the world is played for ten seconds and must stay alive, responsive and sealed.
 
-If all three pass, it is merged and live within a minute. No human reviews it.
+If all three pass, it is merged and live within a minute, up to ten additions a day; later ones wait
+for the next day. No human reviews it.

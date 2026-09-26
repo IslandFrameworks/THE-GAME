@@ -10,6 +10,9 @@
 #         only its entities/ and assets/ files are placed into the tree.
 # merge   holds write access and never checks out or runs anything. It merges exactly the commit
 #         that was judged, only if judge passed; a push after judging makes the merge fail.
+#         It also holds the DAILY CAP: every merge is one Cloudflare build, the free plan allows 500
+#         a month, and a flood of tiny valid PRs could otherwise spend them all. Over the cap, a
+#         passing PR waits: it is re-judged when reopened (or pushed to) on a later day.
 #
 # No Cloudflare credential exists in this repository: Cloudflare Pages pulls and builds it itself.
 name: gatekeeper
@@ -61,9 +64,21 @@ jobs:
       contents: write
       pull-requests: write
     steps:
-      - name: Merge exactly what was judged
+      - name: Merge exactly what was judged (within the daily cap)
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR: ${{ github.event.pull_request.number }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-        run: gh pr merge "$PR" --repo "$GITHUB_REPOSITORY" --squash --match-head-commit "$HEAD_SHA"
+          MAIN: ${{ github.event.repository.default_branch }}
+          DAILY_CAP: 10
+        run: |
+          # Commits on main in the last 24 hours: one per merge, so one per build. Only merges
+          # (and Keepers) put commits on main, so no contributor can move this number.
+          since=$(date -u -d '24 hours ago' +%Y-%m-%dT%H:%M:%SZ)
+          merged=$(gh api --paginate "repos/$GITHUB_REPOSITORY/commits?sha=$MAIN&since=$since&per_page=100" --jq length | awk '{n+=$1} END {print n+0}')
+          if [ "$merged" -ge "$DAILY_CAP" ]; then
+            gh pr comment "$PR" --repo "$GITHUB_REPOSITORY" --body "This passed every check. The world takes $DAILY_CAP additions a day and today's are used, so it has not been merged yet. Close and reopen this pull request (or push any commit) after a day and it will be judged and merged then."
+            echo "Daily cap reached ($merged merges in 24h); not merging."
+            exit 0
+          fi
+          gh pr merge "$PR" --repo "$GITHUB_REPOSITORY" --squash --match-head-commit "$HEAD_SHA"
