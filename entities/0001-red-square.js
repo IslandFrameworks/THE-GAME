@@ -1,4 +1,3 @@
-// Commit 0001. The first creature: a 16x16 red square that moves with the arrow keys.
 THE_GAME.register({
   name: 'red square',
   x: 100, y: 100, size: 16, speed: 3,
